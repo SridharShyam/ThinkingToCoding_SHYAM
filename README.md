@@ -24,7 +24,8 @@ print("\nSum of all numbers divisible by 5: ",total)
 ## Output:
 Numbers divisible by 5 between 1 and 100
 
-5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 
+5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100
+
 Sum of all numbers divisible by 5:  1050
 
 
