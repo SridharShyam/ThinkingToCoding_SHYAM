@@ -12,22 +12,36 @@ The program includes input validation (starting range must be less than ending r
 
 ## Python Code:
 ```
+from pymongo import MongoClient
+import datetime
+
+print("Program started")
+client = MongoClient("mongodb://localhost:27017/")
+print("Connected to MongoDB")
+
+db = client["sum_of_multiples_db"]
+collection = db["sum_of_multiples_collection"]
+
 while True:
-    a = int(input("Enter Starting range: "))
-    z = int(input("Enter Ending range: "))
-
-    if a < z:
-        break
-    else:
-        print("Error: Starting range must be less than ending range.\n")
+    try:
+        a = int(input("Enter Starting range: "))
+        z = int(input("Enter Ending range: "))
+        if a < z:
+            break
+        else:
+            print("Starting range must be less than ending range")
+    except ValueError:
+        print("Please enter only numbers")
 
 while True:
-    n = int(input("Enter Divisor: "))
-
-    if(n != 0):
-        break
-    else:
-        print("Error: Divisor cannot be zero. Please enter a valid divisor.\n")
+    try:
+        n = int(input("Enter Divisor: "))
+        if n != 0:
+            break
+        else:
+            print("Divisor cannot be zero")
+    except ValueError:
+        print("Please enter only numbers")
 
 print("\nChoose the operation:")
 print("1. Sum")
@@ -35,7 +49,16 @@ print("2. Product")
 print("3. Average")
 print("4. Count")
 
-choice = int(input("Enter your choice (1/2/3/4): "))
+while True:
+    try:
+        choice = int(input("Enter your choice (1/2/3/4): "))
+        if choice in [1, 2, 3, 4]:
+            break
+        else:
+            print("Please choose between 1 and 4")
+    except ValueError:
+        print("Please enter only numbers")
+
 print(f"\nNumbers divisible by {n} between {a} and {z}")
 
 nums = []
@@ -45,34 +68,59 @@ for i in range(a, z + 1):
         print(i, end=" ")
         nums.append(i)
 
-# No divisible numbers
+result_amount = 0
+op_type = ""
+
 if len(nums) == 0:
     print("\nNo numbers divisible by", n)
 else:
-    if choice == 1:  # Sum
-        print(f"\nSum = {sum(nums)}")
+    if choice == 1:
+        result_amount = sum(nums)
+        op_type = "Sum"
+        print(f"\nSum = {result_amount}")
 
-    elif choice == 2:  # Product
+    elif choice == 2:
         product = 1
         for x in nums:
             product *= x
-        print(f"\nProduct = {product}")
+        result_amount = product
+        op_type = "Product"
+        print(f"\nProduct = {result_amount}")
 
-    elif choice == 3:  # Average
-        avg = sum(nums) / len(nums)
-        print(f"\nAverage = {avg}")
+    elif choice == 3:
+        result_amount = sum(nums) / len(nums)
+        op_type = "Average"
+        print(f"\nAverage = {result_amount}")
 
-    elif choice == 4:  # Count
-        print(f"\nCount = {len(nums)}")
+    elif choice == 4:
+        result_amount = len(nums)
+        op_type = "Count"
+        print(f"\nCount = {result_amount}")
 
-    else:
-        print("\nInvalid choice!")
+if op_type:
+    print("Inserting data into MongoDB...")
+    
+    current_now = datetime.datetime.now()
+
+    collection.insert_one({
+        "start_range": a,
+        "end_range": z,
+        "divisor": n,
+        "operation": op_type,
+        "result": result_amount,
+        "date": current_now.strftime("%Y-%m-%d"),
+        "time": current_now.strftime("%H:%M:%S")
+    })
+
+    print("✅ Data inserted successfully")
 ```
 
 ## Output:
+Program started
+Connected to MongoDB
 Enter Starting range: 2
-Enter Ending range: 105
-Enter Divisor: 4
+Enter Ending range: 88
+Enter Divisor: 3
 
 Choose the operation:
 1. Sum
@@ -81,11 +129,15 @@ Choose the operation:
 4. Count
 Enter your choice (1/2/3/4): 3
 
-Numbers divisible by 4 between 2 and 105
-4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104
-Average = 54.0
+Numbers divisible by 3 between 2 and 88
+3 6 9 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60 63 66 69 72 75 78 81 84 87
+Average = 45.0
+Inserting data into MongoDB...
+✅ Data inserted successfully
 
-<img width="1186" height="484" alt="image" src="https://github.com/user-attachments/assets/cc36a492-a5a4-4fad-b974-63faf875ee89" />
+<img width="1974" height="644" alt="image" src="https://github.com/user-attachments/assets/ae298ad3-2b0a-4c78-8a31-ab616497a25a" />
+
+<img width="3200" height="1500" alt="image" src="https://github.com/user-attachments/assets/12d81021-2291-478a-8421-2b51e8921b75" />
 
 ## Result:
 The program successfully validates inputs, identifies all numbers divisible by the user-provided divisor, performs the selected computation, displays the complete list of divisible numbers, and prints the final calculated value.
