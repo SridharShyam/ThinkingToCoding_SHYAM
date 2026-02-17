@@ -85,6 +85,8 @@ else:
 
 if op_type:
     print("Inserting data into MongoDB...")
+    
+    current_now = datetime.datetime.now()
 
     collection.insert_one({
         "start_range": a,
@@ -92,7 +94,8 @@ if op_type:
         "divisor": n,
         "operation": op_type,
         "result": result_amount,
-        "timestamp": datetime.datetime.now()
+        "date": current_now.strftime("%Y-%m-%d"),
+        "time": current_now.strftime("%H:%M:%S")
     })
 
     print("✅ Data inserted successfully")
