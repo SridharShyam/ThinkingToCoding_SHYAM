@@ -1,12 +1,13 @@
 from pymongo import MongoClient
 import datetime
+import config
 
 print("Program started")
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient(config.MONGODB_URI)
 print("Connected to MongoDB")
 
-db = client["sum_of_multiples_db"]
-collection = db["sum_of_multiples_collection"]
+db = client[config.DATABASE_NAME]
+collection = db[config.COLLECTION_NAME]
 
 while True:
     try:
@@ -98,4 +99,4 @@ if op_type:
         "time": current_now.strftime("%H:%M:%S")
     })
 
-    print("✅ Data inserted successfully")
+    print("Data inserted successfully")

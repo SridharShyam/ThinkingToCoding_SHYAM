@@ -1,8 +1,9 @@
 from pymongo import MongoClient
+import config
 
 print("Program started")
 
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient(config.MONGODB_URI)
 print("Connected to MongoDB")
 
 client.close()
