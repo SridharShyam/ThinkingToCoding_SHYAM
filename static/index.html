@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Operations | AI Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --panel-bg: rgba(26, 29, 40, 0.7);
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.5);
+            --secondary: #ec4899;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15), transparent 25%);
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeUp 0.8s ease-out;
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.5;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            transition: color 0.3s;
+        }
+
+        input, select {
+            width: 100%;
+            background: rgba(15, 17, 26, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        input:focus + label, select:focus + label {
+            color: var(--text-main);
+        }
+
+        select option {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px var(--primary-glow);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Results Area */
+        .results-container {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .result-title {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+
+        .result-array {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .result-array::-webkit-scrollbar {
+            width: 6px;
+        }
+        .result-array::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .status-message {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .status-success {
+            color: var(--success);
+        }
+        
+        .status-error {
+            color: var(--error);
+        }
+
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .btn-text {
+            transition: opacity 0.3s;
+        }
+
+        .btn-loading .btn-text {
+            opacity: 0;
+        }
+
+        .btn-loading .loader {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">NumOps AI</h1>
+            <p class="subtitle">Compute ranges, apply divisors, visualize results.</p>
+        </div>
+
+        <form id="calcForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="start_range">Starting Range</label>
+                    <input type="number" id="start_range" required placeholder="e.g. 1">
+                </div>
+                <div class="form-group">
+                    <label for="end_range">Ending Range</label>
+                    <input type="number" id="end_range" required placeholder="e.g. 100">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="divisor">Divisor</label>
+                    <input type="number" id="divisor" required placeholder="e.g. 5">
+                </div>
+                <div class="form-group">
+                    <label for="choice">Operation</label>
+                    <select id="choice" required>
+                        <option value="1">Sum</option>
+                        <option value="2">Product</option>
+                        <option value="3">Average</option>
+                        <option value="4">Count</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="btn-text">Execute Calculation</span>
+                <div class="loader"></div>
+            </button>
+        </form>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="result-card">
+                <div class="result-title" id="operationName">Result</div>
+                <div class="result-value" id="resultValue">0</div>
+                <div class="result-title">Divisible Numbers Found</div>
+                <div class="result-array" id="numbersArray">[]</div>
+            </div>
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calcForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Set loading state
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            statusMessage.className = 'status-message';
+            statusMessage.textContent = '';
+            
+            const payload = {
+                start_range: parseInt(document.getElementById('start_range').value),
+                end_range: parseInt(document.getElementById('end_range').value),
+                divisor: parseInt(document.getElementById('divisor').value),
+                choice: parseInt(document.getElementById('choice').value)
+            };
+
+            try {
+                const response = await fetch('/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'An error occurred during calculation.');
+                }
+
+                // Update UI with results
+                document.getElementById('operationName').textContent = data.operation + ' Result';
+                
+                // Format large numbers simply
+                const resVal = data.result;
+                document.getElementById('resultValue').textContent = 
+                    (resVal > 1e9) ? resVal.toExponential(4) : resVal;
+
+                document.getElementById('numbersArray').textContent = 
+                    data.numbers.length > 0 ? data.numbers.join(', ') : 'None found';
+
+                statusMessage.textContent = 'Data successfully saved to MongoDB!';
+                statusMessage.className = 'status-message status-success';
+                
+                resultsContainer.style.display = 'block';
+
+            } catch (error) {
+                statusMessage.textContent = error.message;
+                statusMessage.className = 'status-message status-error';
+                resultsContainer.style.display = 'block';
+                console.error(error);
+            } finally {
+                // Reset loading state
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
